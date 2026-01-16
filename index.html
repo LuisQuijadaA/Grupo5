@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Panel de Control</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --math: #0ea5e9;
+            --lang: #ec4899;
+            --bg: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #panel-container {
+            width: 100%;
+            max-width: 1000px; /* Un poco más ancho para las 3 columnas */
+            background: white;
+            padding: 40px;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .main-logo {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+
+        h1 { color: var(--primary); margin: 0; font-size: 2.2rem; }
+        .subtitle { color: #64748b; margin-bottom: 40px; font-size: 1.1rem; }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 40px 0 25px 0;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+
+        .section-divider::after {
+            content: "";
+            flex: 1;
+            height: 4px;
+            margin-left: 15px;
+            border-radius: 10px;
+        }
+
+        .sd-math { color: var(--math); }
+        .sd-math::after { background: var(--math); }
+        .sd-lang { color: var(--lang); }
+        .sd-lang::after { background: var(--lang); }
+
+        /* CONFIGURACIÓN DE 3 COLUMNAS */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Fuerza 3 columnas */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .challenge-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            border: 3px solid #f1f5f9;
+            border-radius: 25px;
+            padding: 20px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(67, 56, 202, 0.15);
+        }
+
+        .card-img {
+            width: 100px; /* Imagen más grande */
+            height: 100px;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            text-align: center;
+        }
+
+        .card-title {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        .footer {
+            margin-top: 50px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        /* Responsive: Ajuste para tablets y celulares */
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: repeat(2, 1fr); } /* 2 columnas en tablets */
+        }
+
+        @media (max-width: 480px) {
+            .grid-container { grid-template-columns: 1fr; } /* 1 columna en celulares pequeños */
+            #panel-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="panel-container">
+        <img src="img/logo.jpg" class="main-logo" alt="Banner Uprit">
+        
+        <h1>¡Aprender es divertido!</h1>
+        <p class="subtitle">I.E. UPRIT 2026</p>
+
+        <div class="section-divider sd-math">🧮 Matemática</div>
+        
+        <div class="grid-container">
+            <a href="SUMASYRESTAS.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Sumas y Restas</span></div>
+            </a>
+
+            <a href="MULTIPLICACIONES.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Multiplicar</span></div>
+            </a>
+
+            <a href="DIVISIONES.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Dividir</span></div>
+            </a>
+
+            <a href="MANEJODEDINERO.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Contar Dinero</span></div>
+            </a>
+
+            <a href="MAYORMENORIGUAL.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Mayor o Menor</span></div>
+            </a>
+
+            <a href="FRACCIONESHOMOGENEAS.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Fracciones</span></div>
+            </a>
+
+            <a href="PERIMETROS.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Perímetros</span></div>
+            </a>
+
+            <a href="TABLERODEVALORPOSICIONAL.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Tablero Posicional</span></div>
+            </a>
+
+            <a href="RELOJ.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">El Reloj</span></div>
+            </a>
+
+            <a href="PATRONESNUMERICOS.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Patrones</span></div>
+            </a>
+
+            <a href="CONTEODEFIGURAS.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Conteo de Figuras</span></div>
+            </a>
+
+            <a href="DESAFIOSDERAZONAMIENTO.html" class="challenge-card">
+                <img src="img/MATE.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Razonamiento</span></div>
+            </a>
+        </div>
+
+        <div class="section-divider sd-lang">📚 Comunicación</div>
+
+        <div class="grid-container">
+            <a href="RV_SINONIMOSYANTONIMOS.html" class="challenge-card">
+                <img src="img/RV.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Sinónimos</span></div>
+            </a>
+
+            <a href="RV_ANALOGIAS.html" class="challenge-card">
+                <img src="img/RV.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Analogías</span></div>
+            </a>
+
+            <a href="RV_SERIESVERBALES.html" class="challenge-card">
+                <img src="img/RV.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">Series Verbales</span></div>
+            </a>
+        </div>
+
+        <div class="section-divider sd-math">📚 TODO EMPEZO AQUÍ</div>
+
+        <div class="grid-container">
+            <a href="img/PROBLEMAS.jpg" class="challenge-card">
+                <img src="img/PROBLEMAS.jpg" class="card-img">
+                <div class="card-info"><span class="card-title">TODO EMPEZO AQUÍ</span></div>
+            </a>
+        </div>
+
+        <div class="footer">
+            © 2026 Institución Educativa UPRIT • Calidad y Excelencia Educativa<br><br>
+            CRUZADO QUIROZ, LENNIN.<br>
+DE LA CRUZ GARCÍA, ELARD.<br>
+LLICO RUMAY, JERLY SANKEY.<br>
+MACALUPU PAIVA, JHON WILDER.<br>
+PAREDES CURIMOZÓN, JOSÉ LUIS.<br>
+QUIJADA ACUÑA, LUIS MIGUEL.<br>
+        </div>
+    </div>
+
+</body>
+</html>

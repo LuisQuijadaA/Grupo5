@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Conteo de Figuras</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --success: #16a34a;
+            --error: #dc2626;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .problem-card {
+            background: #f9fafb;
+            border: 3px solid #f3f4f6;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Contenedor del dibujo geométrico */
+        .canvas-container {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        .inputs-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #eee;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        .input-group span { font-size: 1.2rem; }
+        .input-group input {
+            width: 40px;
+            height: 35px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        #print-results-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+            @page { margin: 1cm; }
+        }
+    </style>
+</head>
+<body onload="crearExamen()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Escribe tu nombre aquí...">
+        </div>
+
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Conteo de Figuras</h2>
+        <p style="font-size: 1rem; color: #444;">¿Cuántas figuras de cada tipo puedes ver en el dibujo?</p>
+
+        <div id="exercise-container"></div>
+
+        <button class="btn" id="btn-finish" onclick="calcularNota()">Entregar y Ver Nota</button>
+        
+        <div class="school-footer" style="margin-top:20px; font-size:0.8rem; color:#888;">
+            I.E. UPRIT 2026
+        </div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Geometría</h3>
+        </div>
+
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-student-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+
+        <h4 style="font-family: Arial; border-bottom: 1px solid #ccc; margin-bottom: 10px;">Resultados de los 5 desafíos:</h4>
+        <div id="print-results-list"></div>
+
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">CALIFICACIÓN FINAL</h2>
+            <div style="font-size: 4rem; font-weight: bold; color: var(--gold);" id="print-score">0 / 20</div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Reporte</button>
+            <button class="btn" style="background:#6b7280" onclick="location.reload()">Nuevo Examen</button>
+        </div>
+    </div>
+
+<script>
+    let answersKey = [];
+
+    function crearExamen() {
+        const container = document.getElementById('exercise-container');
+        container.innerHTML = "";
+        answersKey = [];
+
+        // Generamos 5 dibujos complejos (valen 4 puntos cada uno)
+        for(let i=0; i<5; i++) {
+            const tri = Math.floor(Math.random() * 4) + 1;
+            const cir = Math.floor(Math.random() * 4) + 1;
+            const cua = Math.floor(Math.random() * 4) + 1;
+
+            answersKey.push({ tri, cir, cua });
+
+            container.innerHTML += `
+                <div class="problem-card">
+                    <div class="canvas-container" id="canvas-${i}">
+                        <svg width="200" height="120" viewBox="0 0 200 120">
+                            ${generarFigurasSVG(tri, cir, cua)}
+                        </svg>
+                    </div>
+                    <div class="inputs-row">
+                        <div class="input-group"><span>▲</span> <input type="number" id="vT-${i}"></div>
+                        <div class="input-group"><span>●</span> <input type="number" id="vC-${i}"></div>
+                        <div class="input-group"><span>■</span> <input type="number" id="vQ-${i}"></div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function generarFigurasSVG(t, c, q) {
+        let html = '';
+        const colors = ['#ff5733', '#33ff57', '#3357ff', '#f333ff', '#ffeb33'];
+        
+        // Generar Cuadrados
+        for(let i=0; i<q; i++) {
+            html += `<rect x="${Math.random()*150}" y="${Math.random()*70}" width="30" height="30" fill="none" stroke="${colors[i%5]}" stroke-width="3" />`;
+        }
+        // Generar Círculos
+        for(let i=0; i<c; i++) {
+            html += `<circle cx="${Math.random()*150 + 20}" cy="${Math.random()*70 + 20}" r="15" fill="none" stroke="${colors[(i+2)%5]}" stroke-width="3" />`;
+        }
+        // Generar Triángulos
+        for(let i=0; i<t; i++) {
+            let x = Math.random()*150;
+            let y = Math.random()*70;
+            html += `<polygon points="${x},${y+30} ${x+15},${y} ${x+30},${y+30}" fill="none" stroke="${colors[(i+4)%5]}" stroke-width="3" />`;
+        }
+        return html;
+    }
+
+    function calcularNota() {
+        let ejerciciosCorrectos = 0;
+        const studentName = document.getElementById('student-name-input').value || "Invitado";
+        const resultsList = document.getElementById('print-results-list');
+        resultsList.innerHTML = ""; 
+
+        answersKey.forEach((key, i) => {
+            const vT = parseInt(document.getElementById(`vT-${i}`).value);
+            const vC = parseInt(document.getElementById(`vC-${i}`).value);
+            const vQ = parseInt(document.getElementById(`vQ-${i}`).value);
+
+            const esCorrecto = (vT === key.tri && vC === key.cir && vQ === key.cua);
+            if(esCorrecto) ejerciciosCorrectos++;
+
+            resultsList.innerHTML += `
+                <div class="report-row" style="font-family: Arial;">
+                    <span>Desafío ${i+1}: Triángulos:${vT||0}, Círculos:${vC||0}, Cuadrados:${vQ||0}</span>
+                    <span style="color:${esCorrecto ? 'green' : 'red'}; font-weight:bold">
+                        ${esCorrecto ? '✓' : '✗ (Eran T:'+key.tri+' C:'+key.cir+' Q:'+key.cua+')'}
+                    </span>
+                </div>
+            `;
+        });
+
+        const notaFinal = ejerciciosCorrectos * 4;
+        document.getElementById('print-student-name').innerText = studentName;
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = notaFinal + " / 20";
+        
+        const feedback = document.getElementById('print-feedback');
+        if(notaFinal === 20) feedback.innerText = "¡VISTA DE ÁGUILA! EXCELENTE 🦅🏆";
+        else if(notaFinal >= 12) feedback.innerText = "¡Buen trabajo! Tienes buena observación. 👍";
+        else feedback.innerText = "Cuenta con calma cada figura por su forma. 💪";
+
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

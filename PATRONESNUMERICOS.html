@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Sucesiones</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --success: #16a34a;
+            --error: #dc2626;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .problem-card {
+            background: #f9fafb;
+            border: 3px solid #f3f4f6;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Estilo de la Sucesión */
+        .sequence-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 15px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
+
+        .arrow {
+            font-size: 1.2rem;
+            color: #9ca3af;
+        }
+
+        input.step-input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.4rem;
+            border: 3px solid var(--gold);
+            border-radius: 15px;
+            background: #fff;
+            outline: none;
+            color: var(--gold);
+        }
+
+        .btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        #print-results-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+            @page { margin: 1cm; }
+        }
+    </style>
+</head>
+<body onload="crearExamen()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Escribe tu nombre aquí...">
+        </div>
+
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Sucesiones Numéricas</h2>
+        <p style="font-size: 1rem; color: #444;">Observa los números y completa los espacios vacíos.</p>
+        <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Puntaje: 2 pts por cada sucesión correcta</p>
+
+        <div id="exercise-container"></div>
+
+        <button class="btn" id="btn-finish" onclick="calcularNota()">Entregar y Ver Nota</button>
+        
+        <div class="school-footer" style="margin-top:20px; font-size:0.8rem; color:#888;">
+            I.E. UPRIT 2026
+        </div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Patrones Numéricos</h3>
+        </div>
+
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-student-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+
+        <h4 style="font-family: Arial; border-bottom: 1px solid #ccc; margin-bottom: 10px;">Resultados de las 10 sucesiones:</h4>
+        <div id="print-results-list"></div>
+
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">CALIFICACIÓN FINAL</h2>
+            <div style="font-size: 4rem; font-weight: bold; color: var(--gold);" id="print-score">0 / 20</div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Reporte</button>
+            <button class="btn" style="background:#6b7280" onclick="location.reload()">Nuevo Examen</button>
+        </div>
+    </div>
+
+<script>
+    let answersKey = [];
+
+    function crearExamen() {
+        const container = document.getElementById('exercise-container');
+        container.innerHTML = "";
+        answersKey = [];
+
+        for(let i=0; i<10; i++) {
+            const start = Math.floor(Math.random() * 20) + 1; // Inicio
+            const pattern = Math.floor(Math.random() * 5) + 2; // Patrón (+2 a +6)
+            const seq = [];
+            for(let j=0; j<5; j++) {
+                seq.push(start + (j * pattern));
+            }
+
+            // Guardamos las respuestas (los dos últimos números son para completar)
+            answersKey.push({ s3: seq[3], s4: seq[4], full: seq });
+
+            container.innerHTML += `
+                <div class="problem-card">
+                    <div class="sequence-container">
+                        <div class="step">${seq[0]}</div>
+                        <span class="arrow">➜</span>
+                        <div class="step">${seq[1]}</div>
+                        <span class="arrow">➜</span>
+                        <div class="step">${seq[2]}</div>
+                        <span class="arrow">➜</span>
+                        <input type="number" class="step-input" id="v1-${i}" placeholder="?">
+                        <span class="arrow">➜</span>
+                        <input type="number" class="step-input" id="v2-${i}" placeholder="?">
+                    </div>
+                    <div style="margin-top:10px; font-size:0.8rem; color:#888;">¿De cuánto en cuánto va?</div>
+                </div>
+            `;
+        }
+    }
+
+    function calcularNota() {
+        let ejerciciosCorrectos = 0;
+        const studentName = document.getElementById('student-name-input').value || "Invitado";
+        const resultsList = document.getElementById('print-results-list');
+        resultsList.innerHTML = ""; 
+
+        answersKey.forEach((key, i) => {
+            const v1 = parseInt(document.getElementById(`v1-${i}`).value);
+            const v2 = parseInt(document.getElementById(`v2-${i}`).value);
+
+            const esCorrecto = (v1 === key.s3 && v2 === key.s4);
+            if(esCorrecto) ejerciciosCorrectos++;
+
+            resultsList.innerHTML += `
+                <div class="report-row" style="font-family: Arial;">
+                    <span>Sucesión ${i+1}: ${key.full[0]}, ${key.full[1]}, ${key.full[2]}, <b>${v1 || '?'}</b>, <b>${v2 || '?'}</b></span>
+                    <span style="color:${esCorrecto ? 'green' : 'red'}; font-weight:bold">
+                        ${esCorrecto ? '✓' : '✗ (Eran ' + key.s3 + ' y ' + key.s4 + ')'}
+                    </span>
+                </div>
+            `;
+        });
+
+        const notaFinal = ejerciciosCorrectos * 2;
+        document.getElementById('print-student-name').innerText = studentName;
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = notaFinal + " / 20";
+        
+        const feedback = document.getElementById('print-feedback');
+        if(notaFinal === 20) feedback.innerText = "¡FELICITACIONES! LOGRO ALCANZADO 🏆";
+        else if(notaFinal >= 12) feedback.innerText = "¡Buen trabajo! Descubriste los patrones. 👍";
+        else feedback.innerText = "Observa bien la diferencia entre los primeros números. 💪";
+
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

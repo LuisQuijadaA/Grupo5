@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Valor Posicional</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --success: #16a34a;
+            --error: #dc2626;
+            --gold: #f59e0b;
+            --decena: #ef4444;
+            --unidad: #3b82f6;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .problem-card {
+            background: #f9fafb;
+            border: 3px solid #f3f4f6;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        /* Bloques Multibase */
+        .blocks-area {
+            display: flex;
+            gap: 10px;
+            min-width: 150px;
+            justify-content: center;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .decena-block {
+            width: 15px;
+            height: 80px;
+            background: var(--decena);
+            border: 1px solid #991b1b;
+            border-radius: 2px;
+        }
+
+        .unidad-container {
+            display: grid;
+            grid-template-columns: repeat(2, 15px);
+            gap: 4px;
+        }
+
+        .unidad-block {
+            width: 15px;
+            height: 15px;
+            background: var(--unidad);
+            border: 1px solid #1e40af;
+            border-radius: 2px;
+        }
+
+        /* Tablero de Valor Posicional */
+        .tvp {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .tvp td {
+            border: 2px solid #333;
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .header-d { background: var(--decena); color: white; }
+        .header-u { background: var(--unidad); color: white; }
+
+        .tvp input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 1.5rem;
+            font-family: 'Comic Sans MS';
+            outline: none;
+        }
+
+        .btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        #print-results-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 30px;
+            margin: 20px 0;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+            @page { margin: 1cm; }
+        }
+    </style>
+</head>
+<body onload="crearExamen()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Escribe tu nombre aquí...">
+        </div>
+
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Tablero de Valor Posicional</h2>
+        <p style="font-size: 0.9rem; color: #666;">Cuenta los bloques y completa el tablero (D y U).</p>
+
+        <div id="exercise-container"></div>
+
+        <button class="btn" id="btn-finish" onclick="calcularNota()">Entregar y Ver Nota</button>
+        
+        <div class="school-footer" style="margin-top:20px; font-size:0.8rem; color:#888;">
+            I.E. UPRIT 2026
+        </div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Valor Posicional</h3>
+        </div>
+
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-student-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+
+        <h4 style="font-family: Arial; border-bottom: 1px solid #ccc; margin-bottom: 10px;">Resultados de los 10 ejercicios:</h4>
+        <div id="print-results-list"></div>
+
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">CALIFICACIÓN FINAL</h2>
+            <div style="font-size: 4rem; font-weight: bold; color: var(--gold);" id="print-score">0 / 20</div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Reporte</button>
+            <button class="btn" style="background:#6b7280" onclick="location.reload()">Nuevo Examen</button>
+        </div>
+    </div>
+
+<script>
+    let answersKey = [];
+
+    function crearExamen() {
+        const container = document.getElementById('exercise-container');
+        container.innerHTML = "";
+        answersKey = [];
+
+        for(let i=0; i<10; i++) {
+            const decenas = Math.floor(Math.random() * 9) + 1;
+            const unidades = Math.floor(Math.random() * 10);
+            const total = (decenas * 10) + unidades;
+
+            answersKey.push({ d: decenas, u: unidades, total: total });
+
+            let decenasHtml = '';
+            for(let d=0; d<decenas; d++) decenasHtml += '<div class="decena-block"></div>';
+
+            let unidadesHtml = '';
+            for(let u=0; u<unidades; u++) unidadesHtml += '<div class="unidad-block"></div>';
+
+            container.innerHTML += `
+                <div class="problem-card">
+                    <div class="blocks-area">
+                        ${decenasHtml}
+                        <div class="unidad-container">${unidadesHtml}</div>
+                    </div>
+                    
+                    <div>
+                        <table class="tvp">
+                            <tr><td class="header-d">D</td><td class="header-u">U</td></tr>
+                            <tr>
+                                <td><input type="number" id="vD-${i}"></td>
+                                <td><input type="number" id="vU-${i}"></td>
+                            </tr>
+                        </table>
+                        <div style="margin-top:10px;">
+                            Número: <input type="number" id="vT-${i}" style="width:60px; height:35px; border:2px solid #ccc; border-radius:5px; text-align:center;">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function calcularNota() {
+        let ejerciciosCorrectos = 0;
+        const studentName = document.getElementById('student-name-input').value || "Invitado";
+        const resultsList = document.getElementById('print-results-list');
+        resultsList.innerHTML = ""; 
+
+        answersKey.forEach((key, i) => {
+            const vD = parseInt(document.getElementById(`vD-${i}`).value);
+            const vU = parseInt(document.getElementById(`vU-${i}`).value);
+            const vT = parseInt(document.getElementById(`vT-${i}`).value);
+
+            const esCorrecto = (vD === key.d && vU === key.u && vT === key.total);
+            if(esCorrecto) ejerciciosCorrectos++;
+
+            resultsList.innerHTML += `
+                <div class="report-row" style="font-family: Arial;">
+                    <span>Ejerc. ${i+1}: ${key.d}D y ${key.u}U = ${vT || '?'}</span>
+                    <span style="color:${esCorrecto ? 'green' : 'red'}; font-weight:bold">${esCorrecto ? '✓' : '✗'}</span>
+                </div>
+            `;
+        });
+
+        const notaFinal = ejerciciosCorrectos * 2;
+        document.getElementById('print-student-name').innerText = studentName;
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = notaFinal + " / 20";
+        
+        const feedback = document.getElementById('print-feedback');
+        if(notaFinal === 20) feedback.innerText = "¡MAESTRO DEL TABLERO POSICIONAL! 📊🏆";
+        else if(notaFinal >= 12) feedback.innerText = "¡Muy bien! Reconoces bien las D y U. 👍";
+        else feedback.innerText = "Cuenta con cuidado las barras rojas (D) y cubos azules (U). 💪";
+
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendiendo a Dividir</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --success: #16a34a;
+            --error: #dc2626;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .problem-card {
+            background: #f9fafb;
+            border: 3px solid #f3f4f6;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .visual-box { 
+            font-size: 1.4rem; 
+            margin-bottom: 10px; 
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            color: #444;
+        }
+
+        .math-inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.6rem;
+            border: 2px solid #9ca3af;
+            border-radius: 10px;
+        }
+
+        .symbol-fixed {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: #e5e7eb;
+            padding: 4px 15px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        #print-results-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 30px;
+            margin: 20px 0;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+            @page { margin: 1cm; }
+        }
+    </style>
+</head>
+<body onload="crearExamen()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" alt="Banner" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Escribe tu nombre aquí...">
+        </div>
+
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Aprendiendo a Dividir</h2>
+        <p style="font-size: 0.9rem; color: #666;">Reparte en partes iguales y encuentra el cociente.</p>
+        <p style="font-size: 0.9rem; color: #666;">Puntaje: 2 pts por ejercicio (Total 20)</p>
+
+        <div id="exercise-container"></div>
+
+        <button class="btn" id="btn-finish" onclick="calcularNota()">Entregar y Ver Nota</button>
+        
+        <div class="school-footer" style="margin-top:20px; font-size:0.8rem; color:#888;">
+            I.E. UPRIT 2026
+        </div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Divisiones</h3>
+        </div>
+
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-student-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+
+        <h4 style="font-family: Arial; border-bottom: 1px solid #ccc; margin-bottom: 10px;">Resultados de los 10 ejercicios:</h4>
+        <div id="print-results-list"></div>
+
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">CALIFICACIÓN FINAL</h2>
+            <div style="font-size: 4rem; font-weight: bold; color: var(--gold);" id="print-score">0 / 20</div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Reporte</button>
+            <button class="btn" style="background:#6b7280" onclick="location.reload()">Nuevo Examen</button>
+        </div>
+    </div>
+
+<script>
+    const ITEMS = ["🍬", "🍎", "⭐", "🍪", "🎈", "💎", "🍄", "🍀"];
+    let answersKey = [];
+
+    function crearExamen() {
+        const container = document.getElementById('exercise-container');
+        container.innerHTML = "";
+        answersKey = [];
+
+        for(let i=0; i<10; i++) {
+            // Generamos divisiones exactas
+            // n2 (divisor) entre 2 y 6 para que no sea muy difícil visualmente
+            const n2 = Math.floor(Math.random() * 4) + 2; 
+            // res (cociente) entre 2 y 5
+            const res = Math.floor(Math.random() * 4) + 2;
+            // n1 (dividendo) es el producto de ambos
+            const n1 = n2 * res;
+
+            const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+            
+            // Pista visual: El total de elementos a repartir
+            let visualText = `Reparte <strong>${n1}</strong> ${item} entre <strong>${n2}</strong> grupos: <br>`;
+            visualText += item.repeat(n1);
+
+            answersKey.push({ n1, n2, res });
+
+            container.innerHTML += `
+                <div class="problem-card">
+                    <div class="visual-box">${visualText}</div>
+                    <div class="math-inputs">
+                        <input type="number" id="v1-${i}" placeholder="?">
+                        <span class="symbol-fixed">÷</span>
+                        <input type="number" id="v2-${i}" placeholder="?">
+                        <span style="font-size: 1.5rem">=</span>
+                        <input type="number" id="vR-${i}" placeholder="?">
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function calcularNota() {
+        let ejerciciosCorrectos = 0;
+        const studentName = document.getElementById('student-name-input').value || "Invitado";
+        const resultsList = document.getElementById('print-results-list');
+        resultsList.innerHTML = ""; 
+
+        answersKey.forEach((key, i) => {
+            const v1 = document.getElementById(`v1-${i}`).value;
+            const v2 = document.getElementById(`v2-${i}`).value;
+            const vR = document.getElementById(`vR-${i}`).value;
+
+            // Verificamos si los tres campos son correctos según la división generada
+            const esCorrecto = (parseInt(v1) === key.n1 && parseInt(v2) === key.n2 && parseInt(vR) === key.res);
+            
+            if(esCorrecto) ejerciciosCorrectos++;
+
+            resultsList.innerHTML += `
+                <div class="report-row" style="font-family: Arial;">
+                    <span>Ejercicio. ${i+1}: ${v1||'?'} ÷ ${v2||'?'} = ${vR||'?'}</span>
+                    <span style="color:${esCorrecto ? 'green' : 'red'}; font-weight:bold">${esCorrecto ? '✓' : '✗'}</span>
+                </div>
+            `;
+        });
+
+        const notaFinal = ejerciciosCorrectos * 2;
+        document.getElementById('print-student-name').innerText = studentName;
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = notaFinal + " / 20";
+        
+        const feedback = document.getElementById('print-feedback');
+        if(notaFinal === 20) feedback.innerText = "¡ERES UN GENIO DIVIDIENDO! 🎈🏆";
+        else if(notaFinal >= 12) feedback.innerText = "¡Buen trabajo! Sigue practicando. 👍";
+        else feedback.innerText = "Repasa las tablas para dividir mejor. 💪";
+
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

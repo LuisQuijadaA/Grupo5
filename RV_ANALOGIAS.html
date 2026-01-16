@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Analogías Verbales</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --analogia: #0ea5e9;
+            --success: #16a34a;
+            --error: #dc2626;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .problem-card {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .analogy-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0369a1;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .opt-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS';
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .opt-btn:hover { background: #e0f2fe; border-color: var(--analogia); }
+        .opt-btn.selected { background: var(--analogia); color: white; border-color: var(--analogia); }
+
+        .btn-finish {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body onload="cargarAnalogias()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Nombre y Apellidos...">
+        </div>
+
+        <h2 style="color: var(--primary); margin: 0;">Analogías Verbales</h2>
+        <p style="color: #666; margin-bottom: 20px;">Relaciona las palabras correctamente.</p>
+
+        <div id="container"></div>
+
+        <button class="btn-finish" onclick="corregir()">Ver mi Calificación</button>
+        
+        <div style="margin-top:15px; font-size:0.8rem; color:#999;">I.E. UPRIT 2026</div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Analogías</h3>
+        </div>
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+        <div id="print-results"></div>
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">NOTA FINAL</h2>
+            <div id="print-score" style="font-size: 4rem; font-weight: bold; color: var(--gold);"></div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn-finish" style="width:auto" onclick="window.print()">🖨️ Imprimir</button>
+            <button class="btn-finish" style="background:#6b7280; width:auto" onclick="location.reload()">Nuevo Test</button>
+        </div>
+    </div>
+
+<script>
+    const banco = [
+        { premisa: "Aleta es a Pez como Ala es a...", opciones: ["Perro", "Pájaro", "Gato", "Pez"], correcta: "Pájaro" },
+        { premisa: "Lunes es a Semana como Enero es a...", opciones: ["Día", "Mes", "Año", "Calendario"], correcta: "Año" },
+        { premisa: "Médico es a Hospital como Maestro es a...", opciones: ["Mercado", "Cine", "Colegio", "Parque"], correcta: "Colegio" },
+        { premisa: "Caliente es a Frío como Luz es a...", opciones: ["Fuego", "Sol", "Oscuridad", "Día"], correcta: "Oscuridad" },
+        { premisa: "Libro es a Leer como Lápiz es a...", opciones: ["Borrar", "Escribir", "Pintar", "Tajador"], correcta: "Escribir" },
+        { premisa: "Guante es a Mano como Zapato es a...", opciones: ["Dedo", "Pie", "Media", "Brazo"], correcta: "Pie" },
+        { premisa: "León es a Selva como Tiburón es a...", opciones: ["Arena", "Río", "Mar", "Aire"], correcta: "Mar" },
+        { premisa: "Pedal es a Bicicleta como Timón es a...", opciones: ["Avión", "Barco", "Carro", "Tren"], correcta: "Carro" },
+        { premisa: "Fruta es a Manzana como Verdura es a...", opciones: ["Lechuga", "Pollo", "Huevo", "Leche"], correcta: "Lechuga" },
+        { premisa: "Nido es a Pájaro como Madriguera es a...", opciones: ["Vaca", "Oveja", "Conejo", "Perro"], correcta: "Conejo" }
+    ];
+
+    let respuestasUsuario = new Array(10).fill(null);
+
+    function cargarAnalogias() {
+        const cont = document.getElementById('container');
+        banco.forEach((item, i) => {
+            let optsHtml = "";
+            item.opciones.forEach(opt => {
+                optsHtml += `<button class="opt-btn" onclick="seleccionar(${i}, '${opt}', this)">${opt}</button>`;
+            });
+            cont.innerHTML += `
+                <div class="problem-card">
+                    <span class="analogy-text">${i+1}. ${item.premisa}</span>
+                    <div class="options-grid">${optsHtml}</div>
+                </div>
+            `;
+        });
+    }
+
+    function seleccionar(preguntaIdx, valor, btn) {
+        const hermanos = btn.parentElement.querySelectorAll('.opt-btn');
+        hermanos.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        respuestasUsuario[preguntaIdx] = valor;
+    }
+
+    function corregir() {
+        let aciertos = 0;
+        const resList = document.getElementById('print-results');
+        resList.innerHTML = "";
+
+        banco.forEach((item, i) => {
+            const esCorrecto = respuestasUsuario[i] === item.correcta;
+            if(esCorrecto) aciertos++;
+            resList.innerHTML += `
+                <div class="report-row" style="font-family: Arial;">
+                    <span style="width:70%">${item.premisa.replace('...', ' ' + (respuestasUsuario[i] || '___'))}</span>
+                    <span style="color:${esCorrecto?'green':'red'}; font-weight:bold">${esCorrecto?'✓ Correcto':'✗ (Era: '+item.correcta+')'}</span>
+                </div>
+            `;
+        });
+
+        const nota = aciertos * 2;
+        document.getElementById('print-name').innerText = document.getElementById('student-name-input').value || "Invitado";
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = nota + " / 20";
+        document.getElementById('print-feedback').innerText = nota >= 12 ? "¡Excelente razonamiento lógico! 🧠✨" : "Sigue practicando las relaciones entre palabras. 📚";
+        
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

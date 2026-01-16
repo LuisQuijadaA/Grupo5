@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I.E. UPRIT 2026 - Sinónimos y Antónimos</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --sinonimo: #8b5cf6;
+            --antonimo: #f97316;
+            --success: #16a34a;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #workshop {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        #print-view {
+            display: none;
+            background: white;
+            width: 210mm; 
+            min-height: 297mm;
+            padding: 15mm;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        .header-img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        .manual-name {
+            text-align: left;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manual-name input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px dotted #9ca3af;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 5px;
+            outline: none;
+            color: var(--primary);
+        }
+
+        .section-header {
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            margin: 20px 0 10px 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .bg-sin { background-color: var(--sinonimo); }
+        .bg-ant { background-color: var(--antonimo); }
+
+        .word-card {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .base-word {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #d1d5db;
+            font-family: 'Comic Sans MS';
+            font-size: 1rem;
+            width: 180px;
+            outline: none;
+        }
+
+        .btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .report-row {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            #workshop { display: none !important; }
+            #print-view { display: block !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body onload="generarReto()">
+
+    <div id="workshop">
+        <img src="img/logo.jpg" class="header-img">
+        
+        <div class="manual-name">
+            <strong>Estudiante:</strong>
+            <input type="text" id="student-name-input" placeholder="Escribe tu nombre aquí...">
+        </div>
+
+        <h2 style="color: var(--primary); margin-bottom: 5px;">Sinónimos y Antónimos</h2>
+        <p style="font-size: 0.9rem; color: #666;">Selecciona la pareja correcta para cada palabra.</p>
+
+        <div class="section-header bg-sin">✨ SINÓNIMOS (Mismo significado)</div>
+        <div id="sin-container"></div>
+
+        <div class="section-header bg-ant">🌗 ANTÓNIMOS (Significado opuesto)</div>
+        <div id="ant-container"></div>
+
+        <button class="btn" onclick="corregir()">Finalizar y Ver Nota</button>
+
+        <div class="school-footer" style="margin-top:20px; font-size:0.8rem; color:#888;">
+            I.E. UPRIT 2026
+        </div>
+    </div>
+
+    <div id="print-view">
+        <div style="text-align:center; border-bottom: 4px solid var(--primary); padding-bottom: 10px;">
+            <h1 style="margin:0; color:var(--primary); font-family: Arial;">REPORTE DE EVALUACIÓN</h1>
+            <h3 style="margin:5px 0; font-family: Arial;">I.E. UPRIT 2026 - Razonamiento Verbal</h3>
+        </div>
+
+        <div style="margin: 20px 0; font-family: Arial; display: flex; justify-content: space-between;">
+            <span><strong>Estudiante:</strong> <span id="print-student-name"></span></span>
+            <span><strong>Fecha:</strong> <span id="print-date"></span></span>
+        </div>
+
+        <h4 style="font-family: Arial; border-bottom: 1px solid #ccc; margin-bottom: 10px;">Resultados de Sinónimos y Antónimos:</h4>
+        <div id="print-results-list"></div>
+
+        <div style="margin-top: 20px; padding: 20px; border: 3px solid var(--gold); border-radius: 15px; text-align: center; font-family: Arial;">
+            <h2 style="margin:0;">CALIFICACIÓN FINAL</h2>
+            <div style="font-size: 4rem; font-weight: bold; color: var(--gold);" id="print-score">0 / 20</div>
+            <p id="print-feedback" style="font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+            <button class="btn" style="width:auto" onclick="window.print()">🖨️ Imprimir Reporte</button>
+            <button class="btn" style="background:#6b7280; width:auto" onclick="location.reload()">Nuevo Examen</button>
+        </div>
+    </div>
+
+<script>
+    const sinonimos = [
+        { p: "Rápido", o: ["Veloz", "Lento", "Fuerte"], c: "Veloz" },
+        { p: "Feliz", o: ["Enojado", "Contento", "Triste"], c: "Contento" },
+        { p: "Bello", o: ["Feo", "Hermoso", "Grande"], c: "Hermoso" },
+        { p: "Oír", o: ["Escuchar", "Hablar", "Mirar"], c: "Escuchar" },
+        { p: "Sencillo", o: ["Fácil", "Difícil", "Oscuro"], c: "Fácil" }
+    ];
+
+    const antonimos = [
+        { p: "Frío", o: ["Helado", "Caliente", "Nieve"], c: "Caliente" },
+        { p: "Día", o: ["Sol", "Tarde", "Noche"], c: "Noche" },
+        { p: "Abierto", o: ["Cerrado", "Ancho", "Libre"], c: "Cerrado" },
+        { p: "Subir", o: ["Escalar", "Bajar", "Saltar"], c: "Bajar" },
+        { p: "Gordo", o: ["Bajo", "Fuerte", "Flaco"], c: "Flaco" }
+    ];
+
+    function generarReto() {
+        const sCont = document.getElementById('sin-container');
+        const aCont = document.getElementById('ant-container');
+        
+        sinonimos.forEach((item, i) => sCont.innerHTML += crearFila(item, 's', i));
+        antonimos.forEach((item, i) => aCont.innerHTML += crearFila(item, 'a', i));
+    }
+
+    function crearFila(item, tipo, i) {
+        let opts = `<option value="">Elegir...</option>`;
+        item.o.sort(() => Math.random() - 0.5).forEach(op => {
+            opts += `<option value="${op}">${op}</option>`;
+        });
+        return `
+            <div class="word-card">
+                <span class="base-word">${item.p}</span>
+                <select id="${tipo}-${i}">${opts}</select>
+            </div>
+        `;
+    }
+
+    function corregir() {
+        let aciertos = 0;
+        const resList = document.getElementById('print-results-list');
+        resList.innerHTML = "";
+
+        // Validar Sinónimos
+        sinonimos.forEach((item, i) => {
+            const val = document.getElementById(`s-${i}`).value;
+            const ok = val === item.c;
+            if(ok) aciertos++;
+            resList.innerHTML += crearReporteRow(`Sinónimo de ${item.p}`, val, item.c, ok);
+        });
+
+        // Validar Antónimos
+        antonimos.forEach((item, i) => {
+            const val = document.getElementById(`a-${i}`).value;
+            const ok = val === item.c;
+            if(ok) aciertos++;
+            resList.innerHTML += crearReporteRow(`Antónimo de ${item.p}`, val, item.c, ok);
+        });
+
+        const nota = aciertos * 2;
+        document.getElementById('print-student-name').innerText = document.getElementById('student-name-input').value || "Invitado";
+        document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('print-score').innerText = nota + " / 20";
+        
+        const feedback = document.getElementById('print-feedback');
+        feedback.innerText = nota >= 12 ? "¡Muy bien! Tienes un gran vocabulario. 📚" : "Sigue leyendo más cuentos para aprender más palabras. 💪";
+
+        document.getElementById('workshop').style.display = 'none';
+        document.getElementById('print-view').style.display = 'block';
+    }
+
+    function crearReporteRow(titulo, user, correct, ok) {
+        return `
+            <div class="report-row" style="font-family: Arial;">
+                <span>${titulo}: <strong>${user || '---'}</strong></span>
+                <span style="color:${ok?'green':'red'}; font-weight:bold">${ok?'✓':'✗ (Era '+correct+')'}</span>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
